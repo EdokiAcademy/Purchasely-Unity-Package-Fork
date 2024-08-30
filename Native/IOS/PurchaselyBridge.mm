@@ -111,7 +111,7 @@ extern "C" {
                 [presentedPresentationViewController.navigationBar setTintColor: [UIColor whiteColor]];
                 presentedPresentationViewController.modalPresentationStyle = UIModalPresentationFullScreen;
             }
-            [Purchasely showController:presentedPresentationViewController type: PLYUIControllerTypeProductPage];
+            [Purchasely showController:presentedPresentationViewController type:PLYUIControllerTypeProductPage from:nil];
         }
     }
 
@@ -250,7 +250,7 @@ extern "C" {
         UINavigationController *navCtrl = [[UINavigationController alloc] initWithRootViewController:ctrl];
         ctrl.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem: UIBarButtonSystemItemDone target:navCtrl     action:@selector(close)];
 
-        [Purchasely showController:navCtrl type: PLYUIControllerTypeSubscriptionList];
+        [Purchasely showController:navCtrl type: PLYUIControllerTypeSubscriptionList from:nil];
     }
 
     void _purchaselyPurchase(const char* planId, const char* offerId,
