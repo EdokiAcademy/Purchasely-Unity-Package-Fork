@@ -176,9 +176,9 @@ namespace PurchaselyRuntime
 			_javaBridge?.Call("setLanguage", language);
 		}
 
-		public void UserLogout()
+		public void UserLogout(bool clearUserAttributes)
 		{
-			_javaBridge?.Call("userLogout");
+			_javaBridge?.Call("userLogout", clearUserAttributes);
 		}
 
 		public void SetDefaultPresentationResultHandler(Action<ProductViewResult, Plan> onResult)

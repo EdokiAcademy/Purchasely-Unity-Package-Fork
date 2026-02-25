@@ -73,7 +73,7 @@ namespace PurchaselyRuntime
 
 		void SetLanguage(string language);
 
-		void UserLogout();
+		void UserLogout(bool clearUserAttributes);
 
 		void SetDefaultPresentationResultHandler(Action<ProductViewResult, Plan> onResult);
 

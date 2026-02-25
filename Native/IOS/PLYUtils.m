@@ -190,18 +190,18 @@
     return PLYRunningModeFull;
 }
 
-+ (LogLevel) parseLogLevel:(int) level {
++ (PLYLogLevel) parseLogLevel:(int) level {
     if (level == 0) {
-        return LogLevelDebug;
+        return PLYLogLevelDebug;
     }
     if (level == 2) {
-        return LogLevelWarn;
+        return PLYLogLevelWarn;
     }
     if (level == 3) {
-        return LogLevelError;
+        return PLYLogLevelError;
     }
     
-    return LogLevelInfo;
+    return PLYLogLevelInfo;
 }
 
 + (char*) planAsJson:(PLYPlan*) plan {

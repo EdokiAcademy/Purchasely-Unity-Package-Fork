@@ -480,8 +480,8 @@ extern "C" {
         return [PLYUtils createCStringFrom:[Purchasely anonymousUserId]];
     }
 
-    void _purchaselyUserLogout() {
-        [Purchasely userLogout];
+    void _purchaselyUserLogout(bool clearUserAttributes) {
+        [Purchasely userLogout:clearUserAttributes];
     }
 
     void _purchaselySetAttribute(int attribute, const char* value) {
@@ -566,9 +566,9 @@ extern "C" {
 		};
 
 		if ([contentIdStr length] == 0) {
-			[Purchasely fetchPresentationWith:presentationIdStr fetchCompletion:fetchCompletion completion:completionFunction];
+			[Purchasely fetchPresentationWith:presentationIdStr fetchCompletion:fetchCompletion completion:completionFunction loadedCompletion:nil];
 		} else {
-			[Purchasely fetchPresentationWith:presentationIdStr contentId:contentIdStr fetchCompletion:fetchCompletion completion:completionFunction];
+			[Purchasely fetchPresentationWith:presentationIdStr contentId:contentIdStr fetchCompletion:fetchCompletion completion:completionFunction loadedCompletion:nil];
 		}
 	}
 
@@ -594,9 +594,9 @@ extern "C" {
 		};
 
 		if ([contentIdStr length] == 0) {
-			[Purchasely fetchPresentationFor:placementIdStr fetchCompletion:fetchCompletion completion:completionFunction];
+			[Purchasely fetchPresentationFor:placementIdStr fetchCompletion:fetchCompletion completion:completionFunction loadedCompletion:nil];
 		} else {
-			[Purchasely fetchPresentationFor:placementIdStr contentId:contentIdStr fetchCompletion:fetchCompletion completion:completionFunction];
+			[Purchasely fetchPresentationFor:placementIdStr contentId:contentIdStr fetchCompletion:fetchCompletion completion:completionFunction loadedCompletion:nil];
 		}
 	}
 

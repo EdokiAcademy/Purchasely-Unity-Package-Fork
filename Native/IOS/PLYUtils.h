@@ -20,7 +20,7 @@
 
 + (PLYRunningMode) parseRunningMode:(int) mode;
 
-+ (LogLevel) parseLogLevel:(int) level;
++ (PLYLogLevel) parseLogLevel:(int) level;
 
 + (char*) planAsJson:(PLYPlan*) plan;
 

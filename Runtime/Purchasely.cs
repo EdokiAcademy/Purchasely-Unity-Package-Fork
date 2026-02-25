@@ -305,9 +305,9 @@ namespace PurchaselyRuntime
 		/// <summary>
 		/// Sign the current Purchasely user out.
 		/// </summary>
-		public void UserLogout()
+		public void UserLogout(bool clearUserAttributes)
 		{
-			_implementation?.UserLogout();
+			_implementation?.UserLogout(clearUserAttributes);
 		}
 
 		/// <summary>

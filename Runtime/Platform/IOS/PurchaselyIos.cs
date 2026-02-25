@@ -249,9 +249,9 @@ namespace PurchaselyRuntime
 			_purchaselySetLanguage(language);
 		}
 
-		public void UserLogout()
+		public void UserLogout(bool clearUserAttributes)
 		{
-			_purchaselyUserLogout();
+			_purchaselyUserLogout(clearUserAttributes);
 		}
 
 		public void SetDefaultPresentationResultHandler(Action<ProductViewResult, Plan> onResult)
@@ -603,7 +603,7 @@ namespace PurchaselyRuntime
 		static extern string _purchaselyGetAnonymousUserId();
 
 		[DllImport("__Internal")]
-		static extern void _purchaselyUserLogout();
+		static extern void _purchaselyUserLogout(bool clearUserAttributes);
 
 		[DllImport("__Internal")]
 		static extern void _purchaselySetDefaultPresentationResultHandler(
