@@ -32,6 +32,7 @@ namespace PurchaselyRuntime
 			Action<bool, string> onStartCompleted = null
 		){
 #if UNITY_ANDROID && !UNITY_EDITOR
+			Debug.Log($"Creating PurchaselyAndroid");
 			_implementation = new PurchaselyAndroid();
 #elif UNITY_IOS && !UNITY_EDITOR
 			_implementation = new PurchaselyIos();
@@ -47,6 +48,8 @@ namespace PurchaselyRuntime
 				return;
 			}
 
+			Debug.Log($"Purchasely _implementation Init");
+			
 			_implementation.Init(
 				settings.ApiKey,
 				userId,

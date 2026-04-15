@@ -18,6 +18,8 @@ namespace PurchaselyRuntime
 		    int runningMode,
 		    Action<bool, string> onStartCompleted)
 		{
+			Debug.Log($"PurchaselyAndroid Init...");
+
 			_javaBridge = new AndroidJavaObject(
 			    "com.purchasely.unity.PurchaselyBridge",
 				AndroidUtils.Activity,
