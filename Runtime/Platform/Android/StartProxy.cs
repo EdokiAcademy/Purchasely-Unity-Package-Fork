@@ -9,11 +9,13 @@ namespace PurchaselyRuntime
 
 		internal StartProxy(Action<bool, string> onStartCompleted) : base("com.purchasely.unity.proxy.StartProxy")
 		{
+			Debug.Log("Creating StartProxy with onStartCompleted");
 			_onStartCompleted = onStartCompleted;
 		}
 
 		public void onStartCompleted(bool success, string error)
 		{
+			Debug.Log("StartProxy onStartCompleted called with success: " + success + " and error: " + error);
 			AsyncCallbackHelper.Instance.Queue(() => _onStartCompleted(success, error));
 		}
 	}
