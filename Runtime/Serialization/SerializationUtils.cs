@@ -9,7 +9,7 @@ namespace PurchaselyRuntime
 	{
 		internal static T Deserialize<T>(string text) where T : class, new()
 		{
-			if (text == null)
+			if (string.IsNullOrEmpty(text))
 				return new T();
 
 			var settings = new JsonSerializerSettings
