@@ -97,6 +97,8 @@ namespace PurchaselyRuntime
 
 		void GetUserSubscriptions(Action<List<SubscriptionData>> onSuccess, Action<string> onError);
 
+		void GetUserSubscriptions(bool invalidateCache, Action<List<SubscriptionData>> onSuccess, Action<string> onError);
+
 		void PresentSubscriptions();
 
 		void SetAttribute(int attribute, string value);

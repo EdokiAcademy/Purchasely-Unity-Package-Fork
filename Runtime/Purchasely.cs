@@ -411,11 +411,21 @@ namespace PurchaselyRuntime
 		}
 
 		/// <summary>
-		/// Get the payload for the list of user subscriptions.
+		/// Get the payload for the list of user subscriptions. Returns the cached
+		/// subscription set populated at SDK init time.
 		/// </summary>
 		/// <param name="onSuccess"> Callback with the payload. </param>
 		/// <param name="onError"> Callback with an error. </param>
 		public void GetUserSubscriptions(Action<List<SubscriptionData>> onSuccess, Action<string> onError)
+			=> GetUserSubscriptions(false, onSuccess, onError);
+
+		/// <summary>
+		/// Get the payload for the list of user subscriptions, optionally forcing the
+		/// SDK to invalidate its in-memory cache and re-fetch from the server. Use
+		/// <paramref name="invalidateCache"/> = true when the caller needs the very
+		/// latest renewal state (e.g. polling for an in-flight auto-renewal).
+		/// </summary>
+		public void GetUserSubscriptions(bool invalidateCache, Action<List<SubscriptionData>> onSuccess, Action<string> onError)
 		{
 			if (_implementation == null)
 			{
@@ -423,7 +433,7 @@ namespace PurchaselyRuntime
 				return;
 			}
 
-			_implementation.GetUserSubscriptions(onSuccess, onError);
+			_implementation.GetUserSubscriptions(invalidateCache, onSuccess, onError);
 		}
 
 		/// <summary>

@@ -345,8 +345,8 @@ extern "C" {
         }];
     }
 
-    void _purchaselyGetUserSubscriptions(PurchaselyStringCallbackDelegate successCallback, void* successCallbackPtr, PurchaselyStringCallbackDelegate     errorCallback, void* errorCallbackPtr) {
-        [Purchasely userSubscriptions: false success:^(NSArray<PLYSubscription*>* _Nullable subscriptions) {
+    void _purchaselyGetUserSubscriptions(bool invalidateCache, PurchaselyStringCallbackDelegate successCallback, void* successCallbackPtr, PurchaselyStringCallbackDelegate     errorCallback, void* errorCallbackPtr) {
+        [Purchasely userSubscriptions: invalidateCache success:^(NSArray<PLYSubscription*>* _Nullable subscriptions) {
             successCallback(successCallbackPtr, [PLYUtils susbscriptionsAsJson:subscriptions]);
         } failure:^(NSError * _Nonnull error) {
             errorCallback(errorCallbackPtr, [PLYUtils createCStringFrom:error.localizedDescription]);

@@ -247,13 +247,16 @@ namespace PurchaselyRuntime
 		}
 
 		public void GetUserSubscriptions(Action<List<SubscriptionData>> onSuccess, Action<string> onError)
+			=> GetUserSubscriptions(false, onSuccess, onError);
+
+		public void GetUserSubscriptions(bool invalidateCache, Action<List<SubscriptionData>> onSuccess, Action<string> onError)
 		{
 			var successAction = new Action<string>(json =>
 			{
 				onSuccess(SerializationUtils.Deserialize<List<SubscriptionData>>(json));
 			});
 
-			_javaBridge?.Call("getUserSubscriptions", new JsonErrorProxy(successAction, onError));
+			_javaBridge?.Call("getUserSubscriptions", invalidateCache, new JsonErrorProxy(successAction, onError));
 		}
 
 		public void PresentSubscriptions()

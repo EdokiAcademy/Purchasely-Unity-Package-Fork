@@ -339,6 +339,9 @@ namespace PurchaselyRuntime
 		}
 
 		public void GetUserSubscriptions(Action<List<SubscriptionData>> onSuccess, Action<string> onError)
+			=> GetUserSubscriptions(false, onSuccess, onError);
+
+		public void GetUserSubscriptions(bool invalidateCache, Action<List<SubscriptionData>> onSuccess, Action<string> onError)
 		{
 			var subscriptionsCallback = new Action<string>(productsJson =>
 			{
@@ -348,7 +351,7 @@ namespace PurchaselyRuntime
 				});
 			});
 
-			_purchaselyGetUserSubscriptions(IosUtils.StringCallback, subscriptionsCallback.GetPointer(),
+			_purchaselyGetUserSubscriptions(invalidateCache, IosUtils.StringCallback, subscriptionsCallback.GetPointer(),
 				IosUtils.StringCallback, onError.GetPointer());
 		}
 
@@ -576,7 +579,8 @@ namespace PurchaselyRuntime
 			successCallbackPtr, IosUtils.StringCallbackDelegate errorCallback, IntPtr errorCallbackPtr);
 
 		[DllImport("__Internal")]
-		static extern void _purchaselyGetUserSubscriptions(IosUtils.StringCallbackDelegate successCallback,
+		static extern void _purchaselyGetUserSubscriptions(bool invalidateCache,
+			IosUtils.StringCallbackDelegate successCallback,
 			IntPtr successCallbackPtr,
 			IosUtils.StringCallbackDelegate errorCallback, IntPtr errorCallbackPtr);
 
