@@ -134,45 +134,59 @@
 
 + (NSDictionary*) subscriptionAsDictionary:(PLYSubscription*) subscription {
     NSMutableDictionary<NSString*, NSObject*>* dict = [NSMutableDictionary new];
-    
+
     [dict setObject:[self planAsDictionary:subscription.plan] forKey:@"plan"];
     [dict setObject:[self productAsDictionary:subscription.product] forKey:@"product"];
-    
+
+    if (subscription.id != nil) {
+        [dict setObject:subscription.id forKey:@"id"];
+    }
+
+    if (subscription.purchaseToken != nil) {
+        [dict setObject:subscription.purchaseToken forKey:@"purchaseToken"];
+    }
+
+    if (subscription.environment != nil) {
+        [dict setObject:subscription.environment forKey:@"environment"];
+    }
+
     if (subscription.contentId != nil) {
         [dict setObject:subscription.contentId forKey:@"contentId"];
     }
-    
+
     if (subscription.storeCountry != nil) {
         [dict setObject:subscription.storeCountry forKey:@"storeCountry"];
     }
-    
-    if (subscription.isFamilyShared != nil) {
-        [dict setObject:subscription.storeCountry forKey:@"isFamilyShared"];
-    }
 
-    if (subscription.isFamilyShared != nil) {
+    [dict setObject:[NSNumber numberWithBool:subscription.isFamilyShared] forKey:@"isFamilyShared"];
+
+    if (subscription.offerIdentifier != nil) {
         [dict setObject:subscription.offerIdentifier forKey:@"offerIdentifier"];
     }
-    
+
     [dict setObject:[NSNumber numberWithInteger:subscription.subscriptionSource] forKey:@"subscriptionSource"];
     [dict setObject:[NSNumber numberWithInteger:subscription.status] forKey:@"status"];
     [dict setObject:[NSNumber numberWithInteger:subscription.offerType] forKey:@"offerType"];
-    
+
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
-    
+
     if (subscription.nextRenewalDate != nil) {
         [dict setObject:[dateFormat stringFromDate:subscription.nextRenewalDate] forKey:@"nextRenewalDate"];
     }
-    
+
     if (subscription.cancelledDate != nil) {
         [dict setObject:[dateFormat stringFromDate:subscription.cancelledDate] forKey:@"cancelledDate"];
     }
-    
+
     if (subscription.purchasedDate != nil) {
         [dict setObject:[dateFormat stringFromDate:subscription.purchasedDate] forKey:@"purchasedDate"];
     }
-    
+
+    if (subscription.originalPurchasedAt != nil) {
+        [dict setObject:[dateFormat stringFromDate:subscription.originalPurchasedAt] forKey:@"originalPurchasedAt"];
+    }
+
     return dict;
 }
 
