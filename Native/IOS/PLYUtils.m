@@ -138,18 +138,6 @@
     [dict setObject:[self planAsDictionary:subscription.plan] forKey:@"plan"];
     [dict setObject:[self productAsDictionary:subscription.product] forKey:@"product"];
 
-    if (subscription.id != nil) {
-        [dict setObject:subscription.id forKey:@"id"];
-    }
-
-    if (subscription.purchaseToken != nil) {
-        [dict setObject:subscription.purchaseToken forKey:@"purchaseToken"];
-    }
-
-    if (subscription.environment != nil) {
-        [dict setObject:subscription.environment forKey:@"environment"];
-    }
-
     if (subscription.contentId != nil) {
         [dict setObject:subscription.contentId forKey:@"contentId"];
     }
@@ -167,6 +155,7 @@
     [dict setObject:[NSNumber numberWithInteger:subscription.subscriptionSource] forKey:@"subscriptionSource"];
     [dict setObject:[NSNumber numberWithInteger:subscription.status] forKey:@"status"];
     [dict setObject:[NSNumber numberWithInteger:subscription.offerType] forKey:@"offerType"];
+    [dict setObject:[NSNumber numberWithInteger:subscription.environment] forKey:@"environment"];
 
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
@@ -183,8 +172,8 @@
         [dict setObject:[dateFormat stringFromDate:subscription.purchasedDate] forKey:@"purchasedDate"];
     }
 
-    if (subscription.originalPurchasedAt != nil) {
-        [dict setObject:[dateFormat stringFromDate:subscription.originalPurchasedAt] forKey:@"originalPurchasedAt"];
+    if (subscription.originalPurchasedDate != nil) {
+        [dict setObject:[dateFormat stringFromDate:subscription.originalPurchasedDate] forKey:@"originalPurchasedAt"];
     }
 
     return dict;
