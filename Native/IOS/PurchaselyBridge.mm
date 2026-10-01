@@ -110,6 +110,9 @@ extern "C" {
                 [presentedPresentationViewController.navigationBar setShadowImage: [UIImage new]];
                 [presentedPresentationViewController.navigationBar setTintColor: [UIColor whiteColor]];
                 presentedPresentationViewController.modalPresentationStyle = UIModalPresentationFullScreen;
+                // Edoki: the visible (transparent) bar overlaid the paywall: top image cropped,
+                // close X over the title in landscape, iOS 26 bar-button fill on the X.
+                [presentedPresentationViewController setNavigationBarHidden:YES animated:NO];
             }
             [Purchasely showController:presentedPresentationViewController type:PLYUIControllerTypeProductPage from:nil];
         }
