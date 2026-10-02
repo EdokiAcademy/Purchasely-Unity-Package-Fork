@@ -148,34 +148,67 @@ extern "C" {
         }
     }
 
+    // Edoki: placement paywalls are fetched, then displayed by the SDK itself (displayFrom:),
+    // instead of presentationControllerFor: + our own UINavigationController wrapper. The
+    // synchronous call built the paywall before it was in a window: on iPhone in landscape the
+    // SDK then picked the Portrait layout (fixed only by a rotation), and it blocked Unity's main
+    // thread for the whole load. fetchPresentationFor: keeps the per-call result callback, which
+    // Unity relies on for CANCELLED (displayFor: would only report through the default handler).
+    PLYPresentation* displayedPlacementPresentation;
+    bool placementFetchInFlight;
+
     void _purchaselyPresentPresentationForPlacement(const char* placementId, const char* contentId, PurchaselyBoolCallbackDelegate loadCallback, void*     loadCallbackPtr, PurchaselyVoidCallbackDelegate closeCallback, void* closeCallbackPtr, PurchaselyPresentationResultCallbackDelegate     presentationResultCallback, void* presentationResultCallbackPtr) {
 
-        auto loadedFunction = ^(PLYPresentationViewController * _Nullable constroller, BOOL loaded, NSError * _Nullable error) {
-            if (error != nil) {
-                NSLog(@"%@", [error localizedDescription]);
-            }
-
-            loadCallback(loadCallbackPtr, loaded);
-        };
+        // The fetch is asynchronous now, so a second request can arrive before the first paywall
+        // is on screen; presenting both would stack two paywalls.
+        if (placementFetchInFlight) {
+            NSLog(@"Purchasely placement fetch already in flight. Ignoring the new request.");
+            return;
+        }
+        placementFetchInFlight = true;
 
         auto completionFunction = ^(enum PLYProductViewControllerResult result, PLYPlan * _Nullable plan) {
+            displayedPlacementPresentation = nil;
             presentationResultCallback(presentationResultCallbackPtr, [PLYUtils parseProductViewResult:result], [PLYUtils planAsJson:plan]);
         };
 
+        auto loadedFunction = ^{
+            loadCallback(loadCallbackPtr, true);
+        };
+
+        auto fetchCompletion = ^(PLYPresentation * _Nullable presentation, NSError * _Nullable error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                placementFetchInFlight = false;
+
+                if (presentation == nil || presentation.controller == nil
+                    || presentation.type == PLYPresentationTypeDeactivated
+                    || presentation.type == PLYPresentationTypeClient) {
+                    if (error != nil) {
+                        NSLog(@"%@", [error localizedDescription]);
+                    }
+                    NSLog(@"Purchasely presentation is not valid. Will not show.");
+                    loadCallback(loadCallbackPtr, false);
+                    return;
+                }
+
+                displayedPlacementPresentation = presentation;
+                // The SDK owns this navigation controller, so the 5.7.9 API applies (it is a no-op
+                // on an app-owned one); the close X is then rendered in the paywall content.
+                [presentation setNavigationBarHidden:YES animated:NO];
+                [presentation displayFrom:nil];
+            });
+        };
+
+        NSString* placementIdStr = [PLYUtils createNSStringFrom:placementId];
         NSString* contentIdStr = [PLYUtils createNSStringFrom:contentId];
         if ([contentIdStr length] == 0)
             contentIdStr = nil;
 
-        UIViewController* controller = [Purchasely presentationControllerFor:[PLYUtils createNSStringFrom:placementId]
-                                                                   contentId:contentIdStr
-                                                                      loaded:loadedFunction
-                                                                  completion:completionFunction];
-
-        if (controller != nil) {
-            showNavigationControllerForView(controller);
-        } else {
-            NSLog(@"Purchasely view is not valid. Will not show.");
-        }
+        [Purchasely fetchPresentationFor:placementIdStr
+                               contentId:contentIdStr
+                         fetchCompletion:fetchCompletion
+                              completion:completionFunction
+                        loadedCompletion:loadedFunction];
     }
 
     void _purchaselyPresentPresentationForPlan(const char* planId, const char* presentationId, const char* contentId, PurchaselyBoolCallbackDelegate     loadCallback, void* loadCallbackPtr, PurchaselyVoidCallbackDelegate closeCallback, void* closeCallbackPtr,     PurchaselyPresentationResultCallbackDelegate presentationResultCallback, void* presentationResultCallbackPtr) {
@@ -429,6 +462,15 @@ extern "C" {
     }
 
     void _purchaselyClosePresentation() {
+        if (displayedPlacementPresentation != nil) {
+            PLYPresentation* presentation = displayedPlacementPresentation;
+            displayedPlacementPresentation = nil;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [presentation close];
+            });
+            return;
+        }
+
         if (presentedPresentationViewController != nil) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [presentedPresentationViewController dismissViewControllerAnimated:true completion:^{
