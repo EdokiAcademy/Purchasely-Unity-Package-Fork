@@ -266,8 +266,52 @@ namespace PurchaselyRuntime
 
         public void SetAttribute(int attribute, string value)
         {
-            _javaBridge?.Call("setAttribute", attribute, value);
+            if (_javaBridge == null)
+                return;
+
+            var nativeOrdinal = GetNativeAttributeOrdinal(attribute);
+            if (nativeOrdinal < 0)
+                return;
+
+            _javaBridge.Call("setAttribute", nativeOrdinal, value);
         }
+
+		// The Java bridge resolves the attribute with io.purchasely.ext.Attribute.values()[ordinal],
+		// but the native enum is not in the same order as PLYAttribute: it has no
+		// ONESIGNAL_PLAYER_ID, so from MIXPANEL_DISTINCT_ID on every Unity ordinal lands one
+		// entry too far (MIXPANEL_DISTINCT_ID was stored as CLEVER_TAP_ID). Match by name instead.
+		private readonly Dictionary<int, int> _nativeAttributeOrdinals = new Dictionary<int, int>();
+
+		private int GetNativeAttributeOrdinal(int attribute)
+		{
+			if (_nativeAttributeOrdinals.TryGetValue(attribute, out var cached))
+				return cached;
+
+			var name = Enum.GetName(typeof(PLYAttribute), attribute);
+			var nativeOrdinal = -1;
+			if (name == null)
+			{
+				Debug.LogWarning($"PurchaselyAndroid SetAttribute: unknown attribute {attribute}, ignored.");
+			}
+			else
+			{
+				try
+				{
+					using (var attributeClass = new AndroidJavaClass("io.purchasely.ext.Attribute"))
+					using (var nativeAttribute = attributeClass.CallStatic<AndroidJavaObject>("valueOf", name))
+					{
+						nativeOrdinal = nativeAttribute.Call<int>("ordinal");
+					}
+				}
+				catch (AndroidJavaException)
+				{
+					Debug.LogWarning($"PurchaselyAndroid SetAttribute: {name} is not supported by the native Android SDK, ignored.");
+				}
+			}
+
+			_nativeAttributeOrdinals[attribute] = nativeOrdinal;
+			return nativeOrdinal;
+		}
 
 		public void SetUserAttribute(string key, string value)
 		{
