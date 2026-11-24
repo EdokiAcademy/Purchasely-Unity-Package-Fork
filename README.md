@@ -18,3 +18,6 @@ Behaviour differences on Android (the C# API did not change, iOS still runs the 
   to keep the v5 behaviour (v6 defaults to `true`).
 - `RunningMode.Full` maps to `PLYRunningMode.Full`; every other value maps to `Observer`
   (`PaywallObserver` was renamed, and the v6 default is `Observer`).
+- Every paywall is built with `displayBackButton(false)` (bridge `PurchaselyBridge.buildPresentation`).
+  v6 defaults it to `true` and, on a Screen that defines a back button, draws a black arrow over a
+  top-left close button (MM-937). Undo = revert the bridge commit and put the previous AAR back.
